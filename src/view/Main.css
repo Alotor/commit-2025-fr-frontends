@@ -1,0 +1,119 @@
+button {
+  cursor: pointer;
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-areas: "objects sidebar"
+                       "controls sidebar";
+  grid-template-rows: 1fr auto;
+  grid-template-columns: 1fr auto;
+}
+
+.controls {
+  grid-area: controls;
+  display: grid;
+  grid-template-columns: auto 1fr;
+}
+
+.objects {
+  position: relative;
+  overflow: hidden;
+  grid-area: objects;
+  background: #eee;
+}
+
+.sidebar {
+  grid-area: sidebar;
+  display: grid;
+  position: relative;
+  transition: all ease 0.5s;
+  width: 0px;
+}
+
+.close-button {
+  position: absolute;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  left: -24px;
+}
+
+
+.ball {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  width: calc(attr(data-radius px) * 2);
+  height: calc(attr(data-radius px) * 2);
+  border-radius: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  left: attr(data-x px);
+  top: attr(data-y px);
+  background-color: attr(data-color type(<color>), black);
+  box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+}
+
+.json-output {
+  width: 50vw;
+  padding: 0;
+  border: none;
+}
+
+.sidebar[data-expanded='true'] {
+  width: 50vw;
+}
+
+#history {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 25px;
+  background: #aaa;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+#history:hover {
+  opacity: 1;
+}
+
+#history::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  background: #04AA6D;
+  cursor: pointer;
+}
+
+#history::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  background: #04AA6D;
+  cursor: pointer;
+}
+
+.playback {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.feather {
+  fill: #04AA6D;
+  stroke: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.feather.feather-chevrons {
+  fill: none;
+  stroke: #04AA6D;
+}
