@@ -1,22 +1,21 @@
 import './Main.css';
 
 import type { Component } from 'solid-js';
-import type { Model } from "../model";
-import type { Store, StoreEvent } from "../store";
+import type { Element } from "../model";
 
 import { createSignal, createEffect, from } from "solid-js";
-import { store } from "../store";
+import { store } from "../model";
 import * as events from "../events";
 
 import * as i from "./Icons";
 
-const Element: Component = ({color, x, y, radius}) => {
-  let handlePointerDown = (e) => {
+const Element: Component<Element> = ({color, x, y, radius}) => {
+  let handlePointerDown = (e: PointerEvent) => {
     // console.log("handlePointerDown", e);
-    e.target.setPointerCapture(e.pointerId);
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
   };
   
-  let handlePointerMove = (e) => {
+  let handlePointerMove = (e: PointerEvent) => {
     // console.log("handlePointerMove", e);
   };
   
@@ -34,22 +33,31 @@ const Element: Component = ({color, x, y, radius}) => {
 const Controls: Component = () => {
   let paused = from(store.select(state => state.paused));
   let history = from(store.select(state => state.history));
+  let historyLength = () => {
+    let h = history();
+    return h && h.length - 1
+  };
 
-  const handleTogglePlay = (event: PointerEvent) => {
+  const handleTogglePlay = (event: MouseEvent) => {
     store.emit(new events.TogglePause());
   };
 
-  const handleHistoryPointerDown = (event) => {
+  const handleHistoryPointerDown = (event: MouseEvent) => {
     store.emit(new events.Pause());
   };
 
-  const handleHistoryChange = (event) => {
-    let current = history()[event.target.value];
-    current && store.emit(new events.SetElements(current));
+  const handleHistoryChange = (event: InputEvent) => {
+    let h = history();
+    if (h) {
+      let value = (event.target as HTMLInputElement).value;
+      let current = h[parseInt(value)];
+      current && store.emit(new events.SetElements(current));
+    }
   };
-  
-  return (
-    <div class="controls">
+
+  let historyVal = history()
+  return historyVal && (
+    <nav class="controls">
       <button class="playback" onClick={handleTogglePlay}>
         { paused() ? <i.PlayIcon/> : <i.PauseIcon/> }
       </button>
@@ -59,10 +67,10 @@ const Controls: Component = () => {
              min="0"
              onPointerDown={handleHistoryPointerDown}
              onInput={handleHistoryChange}
-             value={history().length - 1}
-             max={history().length - 1}
+             value={historyLength()}
+             max={historyLength()}
       />  
-    </div>
+    </nav>
   );
 };
 
@@ -71,13 +79,13 @@ const Sidebar: Component = () => {
 
   let [expanded, setExpanded] = createSignal(false);
 
-  const handleChangeState = (event) => {
-    let value = JSON.parse(event.target.value);
+  const handleChangeState = (event: Event) => {
+    let value = JSON.parse((event.target as HTMLInputElement).value);
     store.emit(new events.SetElements(value));
   };
 
   return (
-    <sidebar class="sidebar" data-expanded={expanded()}>
+    <aside class="sidebar" data-expanded={expanded()}>
       <button class="close-button"
               onClick={e => setExpanded(s => !s )}>
         {expanded() ? <i.ChevronsRight/> : <i.ChevronsLeft/>}
@@ -86,7 +94,7 @@ const Sidebar: Component = () => {
         onChange={handleChangeState}
         class="json-output"
         value={JSON.stringify(elements(), null, 2)}></textarea>
-    </sidebar>
+    </aside>
   );
 };
 
@@ -95,7 +103,7 @@ const Elements: Component = () => {
 
   const elements = from(store.select(state => state.elements));
 
-  const handleClick = (event: PointerEvent) => {
+  const handleClick = (event: MouseEvent) => {
     store.emit(new events.CreateBall(event.offsetX, event.offsetY));
   };
 
@@ -110,7 +118,7 @@ const Elements: Component = () => {
   return (
     <div class="objects" ref={containerRef}
          onClick={handleClick}>
-      {elements().map((it) => <Element {...it} />)}
+      {elements()?.map((it: Element) => <Element {...it} />)}
     </div>
   );
 };

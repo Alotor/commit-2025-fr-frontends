@@ -3,14 +3,12 @@ import { render } from 'solid-js/web';
 import './index.css';
 import Main from './view/Main';
 
-import {initial} from "./model";
-import {init, store} from "./store";
-import {Initialize, StartHistory} from "./events";
+import { store } from "./model";
+import * as events from "./events";
 
 const root = document.getElementById('app');
 
-init(initial());
-store.emit(new Initialize());
-store.emit(new StartHistory());
+store.emit(new events.Initialize());
+store.emit(new events.StartHistory());
 
 render(() => <Main />, root!);

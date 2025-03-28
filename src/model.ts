@@ -1,6 +1,9 @@
-import { randomNumber, randomColor, randomSign } from "../utils";
+import { randomNumber, randomColor, randomSign } from "./utils";
+import { Store } from "./store";
 
-type Element = {
+export const store = new Store<Model>(initial());
+
+export type Element = {
   color: string;
   x: number;
   y: number;
@@ -10,15 +13,18 @@ type Element = {
 };
 
 export type Model = {
-  width?: number;
-  height?: number;
-  paused: bool;
+  width: number;
+  height: number;
+  paused: boolean;
   elements: Array<Element>,
   history: Array<Array<Element>>,
 }
 
+
 export function initial(): Model {
   return {
+    width: 1024,
+    height: 768,
     paused: false,
     elements: [
       { color: "red", x: 50, y: 50, radius: 10, vx: 50.0, vy: 30.0},
@@ -64,3 +70,4 @@ export function tick(delta: number, state: Model) {
     }
   }
 }
+

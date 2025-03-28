@@ -11,30 +11,49 @@ export abstract class StoreEvent<State> {
   }
 }
 
+class ErrorEvent<State> extends StoreEvent<State> {
+  constructor(readonly error: unknown) {
+    console.error(error);
+    super();
+  }
+}
+
 export class Store<State> {
   private state$: Observable<State>;
   private event$ = new Subject<StoreEvent<State>>();
 
   constructor(initialState: State) {
-    this.state$ = concat(
-      of(initialState),
-      this.event$.pipe(
-        rx.scan((state, e) => produce(state, e.update.bind(e)), initialState),
-        rx.tap((state) => (window as any).state = state),
-        rx.catchError((err) => {
-          console.error("Error", err);
-          return this.state$;
-        }),
-        rx.shareReplay(1)
-      )
-    );
+    this.state$ =
+      concat(
+        of(initialState),
+        this.event$.pipe(
+          rx.scan((state, e) => {
+            try {
+              return produce(state, e.update.bind(e));
+            } catch (err) {
+              this.event$.next(new ErrorEvent(err));
+              return state;
+            }
+          }, initialState),
+          rx.tap((state) => (window as any).state = state),
+          rx.shareReplay(1),
+        )
+      );
 
-    const watch$: Observable<StoreEvent<State>> = this.event$.pipe(
+    const watch$ = this.event$.pipe(
       rx.withLatestFrom(this.state$),
-      rx.mergeMap(([e, state]) => e.watch(state, this.event$)),
-      rx.catchError((err) => {
-        console.error("Error", err);
-        return watch$;
+      rx.mergeMap(([e, state]) => {
+        try {
+          return e.watch(state, this.event$).pipe(
+            rx.catchError((err) => {
+              this.event$.next(new ErrorEvent(err));
+              return EMPTY;
+            })
+          );
+        } catch(err) {
+          this.event$.next(new ErrorEvent(err));
+          return EMPTY;
+        }
       })
     );
 
@@ -54,16 +73,7 @@ export class Store<State> {
   select<T>(selector: (st: State) => T): Observable<T> {
     return this.state$.pipe(
       rx.map(selector),
-      rx.distinctUntilChanged((a,b) => {
-        return equal(a, b);
-      })
+      rx.distinctUntilChanged(equal)
     );
   }
-}
-
-
-export let store = null;
-
-export function init(initialState) {
-  store = new Store(initialState);
 }
