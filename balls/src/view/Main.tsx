@@ -21,12 +21,14 @@ const Element: Component<Element> = ({color, x, y, radius}) => {
   
   return (
     <div class="ball"
-         data-color={color}
-         data-x={x}
-         data-y={y}
-         data-radius={radius}
          onPointerDown={handlePointerDown}
          onPointerMove={handlePointerMove}
+         style={{
+           "--data-x": x + "px",
+           "--data-y": y + "px",
+           "--data-color": color,
+           "--data-radius": radius + "px"
+         }}
     />)
 };
 

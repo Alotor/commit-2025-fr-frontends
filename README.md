@@ -1,5 +1,15 @@
 # Commit 2025 - Functional Reactive Frontends
 
+## Examples provided
+
+### Counter
+
+Basic example using a counter to increase a global number.
+
+### Balls
+
+More sophisticated example with some bouncing circles, history and editable state.
+
 ## Usage
 
 ### Development

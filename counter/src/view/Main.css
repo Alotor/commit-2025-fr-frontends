@@ -1,0 +1,26 @@
+.container {
+  width: 250px;
+  display: grid;
+  grid-template-rows: 90px auto;
+  grid-template-columns: 50% 50%;
+  grid-template-areas: "count count" "minus plus";
+  padding: 1rem;
+  column-gap: 0.5rem;
+}
+
+.count {
+  grid-area: count;
+  white-space; nowrap;
+}
+
+button {
+  cursor: pointer;
+}
+
+.plus {
+  grid-area: plus;
+}
+
+.minus {
+  grid-area: minus;
+}
