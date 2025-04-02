@@ -1,5 +1,13 @@
 # Commit 2025 - Functional Reactive Frontends
 
+Slides:
+
+https://docs.google.com/presentation/d/1uCEB9zdY7_-obVFJcVYPF5h8uufauD0zRIGOTAk9NyY/edit?usp=sharing
+
+Working balls example:
+
+https://alotor.github.io/commit-2025-fr-frontends/
+
 ## Examples provided
 
 ### Counter
@@ -34,11 +42,21 @@ You can deploy the `dist` folder to any static host provider (netlify, surge, no
 ## Dependencies
 
 ### RxJS
-TODO
+
+https://rxjs.dev/
+
+- State management basis
+
 
 ### SolidJS
-TODO
+
+https://www.solidjs.com/
+
+- Rendering framework
+- Signals
 
 ### Immer
 
-TODO
+https://immerjs.github.io/immer/
+
+- Immutable objects

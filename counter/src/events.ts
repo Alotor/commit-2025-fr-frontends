@@ -25,15 +25,15 @@ export class Init extends StoreEvent<Model> {
 }
 
 
-// export class InitDebounce extends StoreEvent<Model> {
-//   watch(model: Model, events: Observable<StoreEvent<Model>> ) {
-//     return events.pipe(
-//       rx.filter(e => e instanceof Increase),
-//       rx.debounceTime(1000),
-//       rx.map(() => new RealIncrease()),
-//     )
-//   }
-// }
+export class InitDebounce extends StoreEvent<Model> {
+  watch(model: Model, events: Observable<StoreEvent<Model>> ) {
+    return events.pipe(
+      rx.filter(e => e instanceof Increase),
+      rx.debounceTime(1000),
+      rx.map(() => new RealIncrease()),
+    )
+  }
+}
 
 // export class Increase extends StoreEvent<Model> {
 // }

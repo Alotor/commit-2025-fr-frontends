@@ -9,20 +9,21 @@ import * as events from "../events";
 
 import * as i from "./Icons";
 
-const Element: Component<Element> = ({color, x, y, radius}) => {
+const Element: Component<Element & {idx: number}> = ({idx, color, x, y, radius}) => {
   let handlePointerDown = (e: PointerEvent) => {
-    // console.log("handlePointerDown", e);
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    store.emit(new events.StartDrag(idx));
   };
   
-  let handlePointerMove = (e: PointerEvent) => {
-    // console.log("handlePointerMove", e);
+  let handlePointerUp = (e: PointerEvent) => {
+    (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+    store.emit(new events.StopDrag(idx));
   };
   
   return (
     <div class="ball"
          onPointerDown={handlePointerDown}
-         onPointerMove={handlePointerMove}
+         onPointerUp={handlePointerUp}
          style={{
            "--data-x": x + "px",
            "--data-y": y + "px",
@@ -106,7 +107,9 @@ const Elements: Component = () => {
   const elements = from(store.select(state => state.elements));
 
   const handleClick = (event: MouseEvent) => {
-    store.emit(new events.CreateBall(event.offsetX, event.offsetY));
+    if (event.target == containerRef) {
+      store.emit(new events.CreateBall(event.offsetX, event.offsetY));
+    }
   };
 
   createEffect(() => {
@@ -120,14 +123,18 @@ const Elements: Component = () => {
   return (
     <div class="objects" ref={containerRef}
          onClick={handleClick}>
-      {elements()?.map((it: Element) => <Element {...it} />)}
+      {elements()?.map((it: Element, idx: number) => <Element idx={idx} {...it} />)}
     </div>
   );
 };
 
 const Main: Component = () => {
+  let handlePointerMove = (e: PointerEvent) => {
+    store.emit(new events.MovePointer(e.clientX, e.clientY));
+  };
+  
   return (
-    <div class="container">
+    <div class="container" onPointerMove={handlePointerMove}>
       <Controls />
       <Elements />
       <Sidebar />

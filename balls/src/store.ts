@@ -3,10 +3,12 @@ import * as rx from "rxjs/operators";
 import { produce } from "immer";
 import equal from 'fast-deep-equal';
 
+export type EventStream<State> = Observable<StoreEvent<State>>;
+
 export abstract class StoreEvent<State> {
   update(_state: State): void {}
 
-  watch(_state: State, _events: Observable<StoreEvent<State>>): Observable<StoreEvent<State>> {
+  watch(_state: State, _events: EventStream<State>): EventStream<State> {
     return EMPTY;
   }
 }

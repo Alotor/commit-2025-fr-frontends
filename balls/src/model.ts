@@ -18,21 +18,23 @@ export type Model = {
   paused: boolean;
   elements: Array<Element>,
   history: Array<Array<Element>>,
+  dragging?: number,
 }
 
 
 export function initial(): Model {
-  return {
+  const model: Model = {
     width: 1024,
     height: 768,
     paused: false,
-    elements: [
-      { color: "red", x: 50, y: 50, radius: 10, vx: 50.0, vy: 30.0},
-      { color: "green", x: 100, y: 50, radius: 13, vx: 100.0, vy: 50.0 },
-      { color: "yellow", x: 500, y: 50, radius: 24, vx: 50.0, vy: 100.0 },
-    ],
+    elements: [],
     history: []
+  };
+
+  for (let i=0; i<10; i++) {
+    model.elements.push(createBall(model));
   }
+  return model;
 }
 
 export function createBall(state: Model): Element {
@@ -48,7 +50,11 @@ export function createBall(state: Model): Element {
 }
 
 export function tick(delta: number, state: Model) {
-  for (const element of state.elements) {
+  for (const [index, element] of state.elements.entries()) {
+    if (state.dragging == index) {
+      continue;
+    }
+    
     element.x += (delta / 1000) * element.vx;
     element.y += (delta / 1000) * element.vy;
 
